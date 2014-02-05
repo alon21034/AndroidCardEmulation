@@ -1,9 +1,0 @@
-<resources>
-
-    <tech-list>
-        <tech>
-			android.nfc.tech.IsoPcdA
-        </tech>
-    </tech-list>
-
-</resources>
