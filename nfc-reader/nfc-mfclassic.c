@@ -217,32 +217,10 @@ main(int argc, const char *argv[])
     nfc_exit(context);
     exit(EXIT_FAILURE);
   }
-// Test if we are dealing with a MIFARE compatible tag
-  if ((nt.nti.nai.btSak & 0x08) == 0) {
-    printf("Warning: tag is probably not a MFC!\n");
+
+  if (select_application(pnd, &nt) <= 0) {
+
   }
-
-  printf("Found MIFARE Classic card:\n");
-  nt.nm = nmMifare;
-  print_nfc_target(&nt, false);
-
-// Guessing size
-  if ((nt.nti.nai.abtAtqa[1] & 0x02) == 0x02)
-// 4K
-    uiBlocks = 0xff;
-  else if ((nt.nti.nai.btSak & 0x01) == 0x01)
-// 320b
-    uiBlocks = 0x13;
-  else
-// 1K/2K, checked through RATS
-    uiBlocks = 0x3f;
-
-  // printf("Guessing size: seems to be a %i-byte card\n", (uiBlocks + 1) * 16);
-
-  //   if (read_card()) {
-	 //  printf("Done, %d blocks read.\n", uiBlocks + 1);
-	 //  fflush(stdout);
-  //   }
 
   nfc_close(pnd);
   nfc_exit(context);

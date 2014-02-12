@@ -73,12 +73,14 @@ bool    quiet_output = false;
 bool    plain_output = false;
 
 // ISO14443A Anti-Collision Commands
-// uint8_t  abtReqa[1] = { 0x20 };
-uint8_t  abtReqa[4] = { 0xd4, 0x4a, 0x0a, 0x00 };
+uint8_t  abtReqa[1] = { 0x26 };
 uint8_t  abtSelectAll[2] = { 0x93, 0x20 };
 uint8_t  abtSelectTag[9] = { 0x93, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 uint8_t  abtCommand[18] = { 0x00 };
 uint8_t  abtCommandPar[18] = { 0x00 };
+uint8_t  abtMessage[24] = {0x03, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+						   0x20, 0x66, 0x72, 0x6f, 0x6d, 0x20, 0x49, 0x73,
+						   0x6f, 0x44, 0x65, 0x70, 0x20, 0x30, 0x57, 0xdd};
 
 static uint32_t
 swap_endian32(const void* pui32)
@@ -129,6 +131,7 @@ transmit_bytes ( nfc_device *pnd, const uint8_t *pbtTx, const size_t szTx)
   // Transmit the command bytes
   szRx = nfc_initiator_transceive_bytes (pnd, pbtTx, szTx, abtRx, sizeof(abtRx), 0);
   if ( szRx < 0) {
+  	printf("not receive anything. \n");
     return false;
   }
 
@@ -186,8 +189,7 @@ void encrypt( struct Crypto1State* s, uint8_t* pbtTx, uint8_t* pbtTxPar, const s
 
 int select_target(nfc_device *pnd, nfc_target *pnt) {
 	  // Send the 7 bits request command specified in ISO 14443A (0x26)
-	  // if (!transmit_bits ( pnd, abtReqa, NULL, 6)) {
-	  if (!transmit_bytes ( pnd, abtReqa, 4)) {
+	  if (!transmit_bits ( pnd, abtReqa, NULL, 7)) {
 	    printf ("Error: No tag available\n");
 	    return -1;
 	  }
@@ -211,6 +213,39 @@ int select_target(nfc_device *pnd, nfc_target *pnt) {
 	  iso14443a_crc_append (abtSelectTag, 7);
 	  transmit_bytes ( pnd, abtSelectTag, 9);
 	  pnt->nti.nai.btSak = abtRx[0];
+
+	return 1;
+}
+
+int select_application(nfc_device *pnd, nfc_target *pnt) {
+
+	abtCommand[0] = 0xe0;
+	abtCommand[1] = 0x80;
+	abtCommand[2] = 0x31;
+	abtCommand[3] = 0x73;
+
+	transmit_bytes(pnd, abtCommand, 4);
+
+	abtCommand[0] = 0x02;
+	abtCommand[1] = 0x00;
+	abtCommand[2] = 0xa4;
+	abtCommand[3] = 0x04;
+	abtCommand[4] = 0x00;
+	abtCommand[5] = 0x07;
+	abtCommand[6] = 0xf0;
+	abtCommand[7] = 0x01;
+	abtCommand[8] = 0x02;
+	abtCommand[9] = 0x03;
+	abtCommand[10] = 0x04;
+	abtCommand[11] = 0x05;
+	abtCommand[12] = 0x06;
+	abtCommand[13] = 0x00;
+	abtCommand[14] = 0xd8;
+	abtCommand[15] = 0xa1;
+
+	transmit_bytes(pnd, abtCommand, 16);
+
+	transmit_bytes(pnd, abtMessage, 24);
 
 	return 1;
 }
