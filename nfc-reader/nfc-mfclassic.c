@@ -211,14 +211,24 @@ main(int argc, const char *argv[])
   printf("NFC reader: %s opened\n", nfc_device_get_name(pnd));
 
 // Try to find a MIFARE Classic tag
-  if (select_target(pnd, &nt) <= 0) {
-    printf("Error: no tag was found\n");
-    nfc_close(pnd);
-    nfc_exit(context);
-    exit(EXIT_FAILURE);
+  while (1) {
+      if (select_target(pnd, &nt) <= 0) {
+        printf("Error: no tag was found\n");
+        //nfc_close(pnd);
+        //nfc_exit(context);
+        //exit(EXIT_FAILURE);
+        system("sleep 1");
+      } else {
+        break;
+      }
   }
 
+
   if (select_application(pnd, &nt) <= 0) {
+
+  }
+
+  if (transmit_mesage(pnd, &nt) <= 0) {
 
   }
 

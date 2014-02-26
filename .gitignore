@@ -30,3 +30,5 @@ proguard/
 
 *.jar
 nfc-reader/test
+
+*~

@@ -84,6 +84,7 @@ typedef union {
 bool    nfc_initiator_mifare_cmd(nfc_device *pnd, const mifare_cmd mc, const uint8_t ui8Block, mifare_param *pmp);
 int select_target(nfc_device *pnd, nfc_target *pnt);
 int select_application(nfc_device*, nfc_target*);
+int transmit_mesage(nfc_device*, nfc_target*);
 
 // Compiler directive, set struct alignment to 1 uint8_t for compatibility
 #  pragma pack(1)

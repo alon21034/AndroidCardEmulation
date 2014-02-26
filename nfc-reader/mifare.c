@@ -245,8 +245,11 @@ int select_application(nfc_device *pnd, nfc_target *pnt) {
 
 	transmit_bytes(pnd, abtCommand, 16);
 
-	transmit_bytes(pnd, abtMessage, 24);
+	return 1;
+}
 
+int transmit_mesage(nfc_device *pnd, nfc_target *pnt) {
+	transmit_bytes(pnd, abtMessage, 24);
 	return 1;
 }
 
